@@ -1,5 +1,5 @@
 # Noah-Ament-Portfolio
-An ongoing collection of Noah Ament's work, last updated: September 5th, 2026
+An ongoing collection of Noah Ament's work, last updated: November 20th, 2026
 
 Itch.io Links: 
 =
@@ -9,6 +9,10 @@ Delay, GMTK Game Jam 2026: https://itch.io/jam/gmtk-jam-2026/rate/4824331<br/>
 
 Repository Descriptions:
 =
+<strong>Nexus</strong><br/>
+&emsp;-Won first place at the Deltahacks x Backboard.io mini-hackathon<br/>
+&emsp;-Developed using Backboard.io as the API for the game master's functionality<br/>
+&emsp;-My contributions to Nexus involved designing (ideas for the game's aesthetics, core gameplay loop, and story), pitching, and project management<br/>
 <strong>theCatacombs.jar</strong><br/>
 &emsp;-This file contains "Tales from the Catacombs," a game that was made by three other students and me for our Grade 12 computer science class culminating project.<br/>
 &emsp;-Everything in the game was designed and built from scratch by the four of us in Java over the span of around three months.<br/>
