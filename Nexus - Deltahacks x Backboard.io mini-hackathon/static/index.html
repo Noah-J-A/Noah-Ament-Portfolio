@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+<title>NEXUS // Neo-Hamilton 2077</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="g0">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- NEXUS mark: impossible triangle from three bars -->
+  <symbol id="nexus-logo" viewBox="0 0 40 40">
+    <polygon fill="#00B4C8" points="5,35.2 17.5,13.6 25,26.5 30,26.5 17.5,4.9 2.5,30.9"/>
+    <polygon fill="#FF3B5C" points="37.5,30.9 12.5,30.9 20,17.9 17.5,13.6 5,35.2 35,35.2"/>
+    <polygon fill="#FFD23F" points="17.5,4.9 30,26.5 15,26.5 12.5,30.9 37.5,30.9 22.5,4.9"/>
+  </symbol>
+  <symbol id="warn-glyph" viewBox="0 0 40 40">
+    <polygon fill="#FFD23F" points="20,3 38,36 2,36"/>
+    <rect x="18" y="13" width="4" height="13" fill="#07080d"/>
+    <rect x="18" y="29" width="4" height="4" fill="#07080d"/>
+  </symbol>
+</svg>
+<div id="crt"></div>
+
+<header id="hud">
+  <div class="hud-title glitch" data-text="NEXUS">NEXUS</div>
+  <div class="hud-stat" id="who-stat">
+    <span class="label">RUNNER</span>
+    <span id="who-val" class="val who"></span>
+  </div>
+  <div class="hud-stat">
+    <span class="label">HP</span>
+    <span id="hp-val" class="val">20</span>
+    <div class="bar"><div id="hp-bar" class="fill hp"></div></div>
+  </div>
+  <div class="hud-stat">
+    <span class="label">HUMANITY</span>
+    <span id="hum-val" class="val">100</span>
+    <div class="bar"><div id="hum-bar" class="fill hum"></div></div>
+  </div>
+  <div class="hud-stat">
+    <span class="label">CREDS</span>
+    <span id="creds-val" class="val creds">¤500</span>
+  </div>
+  <div class="hud-stat wide">
+    <span class="label">CYBERWARE</span>
+    <span id="cyber-list" class="val cyber">— none —</span>
+  </div>
+  <div class="hud-stat wide" id="kit-stat">
+    <span class="label">KIT</span>
+    <span id="kit-list" class="val kit">— empty —</span>
+  </div>
+  <div class="hud-controls">
+    <select id="mode">
+      <option value="story">MODE: STORY</option>
+      <option value="combat">MODE: COMBAT</option>
+      <option value="netrun">MODE: NETRUN</option>
+    </select>
+    <button id="new-session">NEW SESSION</button>
+    <button id="new-campaign">NEW CAMPAIGN</button>
+    <button id="board-btn" title="Leaderboard">TOP 10</button>
+  </div>
+</header>
+
+<div id="mission-bar">
+  <span class="label">MISSION:</span>
+  <b id="mission-title">awaiting briefing</b>
+  <span id="mission-obj"></span>
+  <span id="turns-left">PROMPTS LEFT: 5/5</span>
+</div>
+
+<main id="layout">
+  <section id="scene-pane">
+    <div id="scene-wrap">
+      <canvas id="scene" width="480" height="270"></canvas>
+      <div id="wipe"></div>
+      <div id="scene-label">LOC // STREET</div>
+      <div id="loader" class="hidden"><div id="ld-bar" class="ld-bar"></div><div id="ld-text" class="ld-text"></div></div>
+      <div id="dialogue" class="hidden">
+        <div id="dlg-speaker">
+          <svg class="dlg-logo"><use href="#nexus-logo"/></svg>
+          <svg class="dlg-warn"><use href="#warn-glyph"/></svg>
+          <span id="dlg-name">NEXUS</span>
+        </div>
+        <div id="dlg-text"></div>
+        <button id="dlg-log-btn" title="Dialogue history">LOG</button>
+      </div>
+      <div id="dlg-log" class="hidden">
+        <div class="log-head">DIALOGUE LOG <button id="dlg-log-close">X</button></div>
+        <div id="dlg-log-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <aside id="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-status"><span>20:77</span><span>NCNET 5G &#9646;&#9646;&#9646;&#9647;</span></div>
+    <div class="phone-header"><svg class="logo"><use href="#nexus-logo"/></svg>NEXUS <span>// your assistant</span></div>
+    <nav class="phone-tabs">
+      <button class="active" data-tab="chat">CHAT</button>
+      <button data-tab="memory">MEMORY <span id="mem-count"></span></button>
+    </nav>
+
+    <div id="tab-chat" class="tab active">
+      <div id="chat-log"></div>
+      <div id="beat" class="beat hidden"><b>THIS TURN:</b> <span id="beat-text"></span><em id="beat-con"></em></div>
+      <div id="turn-timer" class="turn-timer hidden"><div id="tt-fill"></div><span id="tt-left">30</span></div>
+      <form id="input-row">
+        <span class="prompt-char">&gt;</span>
+        <input id="chat-input" type="text" autocomplete="off" maxlength="280" placeholder="what will you do next?" />
+        <button type="submit" id="send-btn">TX</button>
+      </form>
+    </div>
+
+    <div id="tab-memory" class="tab">
+      <div class="pane-title">NEURAL LOG</div>
+      <div id="memory-list"></div>
+    </div>
+  </aside>
+</main>
+
+<div id="d20-overlay" class="hidden">
+  <div id="d20">
+    <div id="d20-num">?</div>
+    <div id="d20-label"></div>
+  </div>
+  <div id="d20-hint" class="hidden">&#9660; click to continue</div>
+</div>
+
+<div id="scorecard" class="hidden">
+  <div class="sc-box">
+    <div class="sc-head">PROMPT ANALYSIS <span id="sc-turn"></span></div>
+    <div id="sc-quote" class="sc-quote"></div>
+    <div id="sc-meters" class="sc-meters"></div>
+    <div id="sc-lines" class="sc-lines"></div>
+    <div class="sc-foot">
+      <div><span class="label">TURN SCORE</span><div id="sc-score" class="sc-score">0</div><div id="sc-combo" class="sc-combo"></div></div>
+      <div id="sc-grade" class="sc-grade"></div>
+    </div>
+    <div id="sc-hint" class="sc-hint">&#9660; click to continue</div>
+  </div>
+</div>
+
+<div id="onboard" class="overlay hidden">
+  <div class="ov-inner">
+    <div class="ov-title">NEW RUNNER</div>
+    <p class="ov-warn">This game has strong language and dark themes.</p>
+    <label class="ov-check"><input type="checkbox" id="ob-adult"> I am 18 or older</label>
+    <input id="ob-handle" class="ov-input" maxlength="16" autocomplete="off" placeholder="your handle (3-16 letters, numbers, _ or space)">
+    <div id="ob-classes" class="ob-classes"></div>
+    <div id="ob-error" class="ov-error"></div>
+    <button id="ob-go">JACK IN</button>
+  </div>
+</div>
+
+<div id="market" class="overlay hidden">
+  <div class="ov-inner wide">
+    <div class="ov-title">BLACK MARKET</div>
+    <p class="ov-sub">Cinder Market stalls. Today's stock, open until you jack in.</p>
+    <div class="mk-creds">CREDS <b id="mk-creds">¤0</b> &nbsp;//&nbsp; KIT <b id="mk-count">0/6</b></div>
+    <div id="mk-items" class="mk-items"></div>
+    <div id="mk-kit" class="mk-kit"></div>
+    <div id="mk-error" class="ov-error"></div>
+    <button id="mk-go">JACK IN</button>
+  </div>
+</div>
+
+<div id="comeback" class="overlay hidden">
+  <div class="ov-inner">
+    <div class="ov-title">COME BACK IN</div>
+    <div id="cb-timer" class="cb-timer">00:00:00</div>
+    <div id="cb-today" class="cb-today"></div>
+    <div id="cb-streak" class="cb-streak"></div>
+    <p id="cb-teaser" class="cb-teaser"></p>
+    <div id="cb-board" class="board-body"></div>
+  </div>
+</div>
+
+<div id="board" class="overlay hidden">
+  <div class="ov-inner">
+    <div class="ov-title">LEADERBOARD</div>
+    <div id="board-body" class="board-body"></div>
+    <button id="board-close">CLOSE</button>
+  </div>
+</div>
+
+<div id="gameover" class="hidden">
+  <div class="go-inner">
+    <div class="go-title glitch" data-text="MISSION COMPLETE">MISSION COMPLETE</div>
+    <div id="go-mission" class="go-mission"></div>
+    <div class="go-grade-row">
+      <div id="go-grade" class="go-grade">S</div>
+      <div id="go-score" class="go-score">0/100</div>
+    </div>
+    <button id="go-rank" class="go-rank hidden"></button>
+    <div id="go-board" class="board-body hidden"></div>
+    <p id="go-verdict" class="go-verdict"></p>
+    <div id="go-turns" class="go-turns"></div>
+    <div id="go-summary" class="go-summary"></div>
+    <div id="go-stats" class="go-stats"></div>
+    <button id="restart-btn">PLAY AGAIN</button>
+  </div>
+</div>
+
+<canvas id="fx"></canvas>
+<div id="flash"></div>
+<script src="/static/app.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
